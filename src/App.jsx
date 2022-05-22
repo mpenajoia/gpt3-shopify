@@ -6,12 +6,11 @@ function App() {
   const defaultData = {
     prompt: `Write a poem about ${prompt}`,
     temperature: 0.5,
-    max_tokens: 64,
+    max_tokens: 75,
     top_p: 1.0,
     frequency_penalty: 0.0,
     presence_penalty: 0.0,
   }
-
   const handleInput = (e) => {
     setPrompt(e.target.value)
   }
@@ -29,7 +28,7 @@ function App() {
   }
   const engineIQMap = engineIQ.map((item, key) => {
     return (
-      <button key={key} onClick={handleEngines} value={item} className="bg-fuchsia-400 hover:bg-fuchsia-500 active:bg-fuchsia-500 p-2 text-white text-base font-bold ">{item}</button>
+      <button key={key} onClick={handleEngines} value={item} className="bg-fuchsia-400 hover:bg-fuchsia-500 active:bg-fuchsia-500 duration-200 ease-in-out p-2 text-white text-base font-bold rounded ">{item}</button>
     )
   })
   const [selectedEngine, setSelectedEngine] = useState(engineOptions[2])
@@ -46,21 +45,30 @@ function App() {
     })
     .then(res => res.json())
     .then(data => {
-      setResList([[prompt, data.choices[0].text], ...resList]);
+      setResList([[prompt, data.choices[0].text, currentEngine], ...resList]);
     });
+  }
+  const handleDelete = (e) => {
+    const resFilter = resList?.filter((item) => {
+      return item[0] + ',' + item[2] !== e.target.value 
+    })
+    setResList(resFilter)
   }
   const resMap = resList?.map((each, key) => {
     return (
-      <li key={key} className="w-1/3 bg-amber-300 hover:bg-amber-200 duration-200 ease-in-out p-6 rounded text-blue-800 font-black list-none" >
+      <li key={key} className="w-1/3 bg-amber-300 hover:bg-amber-200 duration-200 ease-in-out p-6 rounded text-blue-800 font-black list-none flex flex-col" >
         <p className="text-2xl text-violet-500 mb-4">Prompt:</p>
         <p className="mb-3">"{each[0]}"</p>
+        <p className="text-2xl text-violet-500 mb-4">Option:</p>
+        <p className="mb-3">{each[2]}</p>
         <p className="whitespace-pre-line	"><span className="text-2xl text-violet-500">Response: </span>{each[1]}</p>
+        <button onClick={handleDelete} className="bg-fuchsia-400 hover:bg-fuchsia-500 duration-200 ease-in-out p-2 font-bold text-white rounded mt-5" value={[each[0], each[2]]}>Delete</button>
       </li>
     )
   })
 
   return (
-    <div className="flex justify-center items-center w-full py-10">
+    <div className="flex justify-center items-center w-full pt-10">
       <div className="flex flex-col justify-center items-center w-3/4 gap-5">
         <div className="flex flex-col justify-center items-center gap-3">
           <div className="w-1/2 flex flex-col">
@@ -87,11 +95,12 @@ function App() {
         </div>
         <form onSubmit={handleButton} className="flex flex-col w-3/4 items-center gap-2">
           <textarea rows="7" onChange={handleInput} value={prompt} placeholder='What is your poem about? Try "happiness" or "love" or both!' className="w-full text-center bg-fuchsia-50 focus:outline-none rounded p-5" />
-          <button className="bg-fuchsia-400 hover:bg-fuchsia-500 active:bg-fuchsia-500 p-3 text-white text-lg font-bold self-end" type='submit'>Submit</button>
+          <button className="bg-fuchsia-400 hover:bg-fuchsia-500 active:bg-fuchsia-500 p-3 text-white text-lg font-bold self-end duration-200 ease-in-out rounded" type='submit'>Submit</button>
         </form>
-        <div className={`flex flex-wrap gap-2 w-full justify-center overflow-auto ease-in-out duration-300 transition-opacity ${(resList.length === 0) ? 'opacity-0' : 'opacity-100' }` }>
+        <ul className={`flex flex-wrap gap-2 w-full justify-center overflow-auto ease-in-out duration-300 transition-opacity ${(resList.length === 0) ? 'opacity-0' : 'opacity-100' }` }>
           {resMap}
-        </div>
+        </ul>
+      <footer className="mt-5 mb-2 text-violet-700"><a href="https://penajoia.com" target="_blank" rel="noreferrer" className="font-bold" >Marco Silva</a> - Front End Developer Intern Challenge - OpenAI (Fall 2022) - <a href="https://www.linkedin.com/in/mpenajoia/" target="_blank" rel="noreferrer" className="font-bold" >LinkedIn</a></footer>
       </div>
     </div>
   );
