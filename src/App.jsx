@@ -4,7 +4,7 @@ import { useState } from "react";
 function App() {
   const [prompt, setPrompt] = useState('')
   const defaultData = {
-    prompt: prompt,
+    prompt: `Write a poem about ${prompt}`,
     temperature: 0.5,
     max_tokens: 64,
     top_p: 1.0,
@@ -15,8 +15,10 @@ function App() {
   const handleInput = (e) => {
     setPrompt(e.target.value)
   }
-   
+
+  
   const [resList, setResList] = useState([])
+
   const handleButton = (e) => {
     e.preventDefault()
     fetch("https://api.openai.com/v1/engines/text-curie-001/completions", {
@@ -36,10 +38,11 @@ function App() {
     return (
       <li key={key} className="w-3/4 bg-blue-400 p-6 rounded text-white list-none mt-4" >
         <p>{each[0]}</p>
-        <p>{each[1]}</p>
+        <p className="whitespace-pre-line	">{each[1]}</p>
       </li>
     )
   })
+  console.table(resList)
 
   return (
     <div className="flex justify-center items-center w-full">
