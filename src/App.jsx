@@ -1,11 +1,66 @@
+import { useState } from "react";
 
-
-// console.log(process.env.REACT_APP_GPT3_KEY)
 
 function App() {
+  const [prompt, setPrompt] = useState('')
+  const defaultData = {
+    prompt: prompt,
+    temperature: 0.5,
+    max_tokens: 64,
+    top_p: 1.0,
+    frequency_penalty: 0.0,
+    presence_penalty: 0.0,
+  }
+
+  // const [input, setInput] =useState('')
+  const handleInput = (e) => {
+    setPrompt(e.target.value)
+  }
+   
+  const [response, setResponse] = useState('')
+  const [resList, setResList] = useState([])
+  const handleButton = (e) => {
+    e.preventDefault()
+    console.log(defaultData.prompt)
+    fetch("https://api.openai.com/v1/engines/text-curie-001/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${process.env.REACT_APP_GPT3_KEY}`,
+      },
+      body: JSON.stringify(defaultData),
+    })
+    .then(res => res.json())
+    .then(data => {
+      setResponse(data.choices[0].text)
+      setResList([...resList, data.choices[0].text])
+    });
+  }
+  console.log(resList)
+  const resMap = resList?.map((each, key) => {
+    return (
+      <li key={key} className="w-3/4 bg-blue-400 p-6 rounded text-white list-none my-4" >
+        <p>{each}</p>
+      </li>
+    )
+  })
+
   return (
-    <div>
-      
+    <div className="flex justify-center items-center w-full">
+      <div className="flex flex-col items-center">
+        <h1 className="text-3xl font-bold text-center">Marco Silva's AI</h1>
+        <form onSubmit={handleButton} className="flex flex-col w-3/4 items-center">
+          <input type='text' onChange={handleInput} value={prompt} placeholder='What shall I do?' className="w-1/2 text-center" />
+          <button type='submit'>Submit</button>
+
+        </form>
+        <div className="flex justify-center">
+          {response ? 
+            <div className="w-3/4 bg-blue-400 p-6 rounded text-white">{response}</div> 
+            : ''}
+        </div>
+        {resMap}
+      </div>
     </div>
   );
 }
