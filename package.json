@@ -1,6 +1,6 @@
 {
   "name": "gpt3-shopify",
-  "homepage": "https://penajoia.com/shopify-frontend-challenge",
+  "homepage": "https://penajoia.com/shopify-frontend-challenge/",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
